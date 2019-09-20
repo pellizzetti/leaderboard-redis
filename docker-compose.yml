@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  leaderboard-api:
+    build: .
+    container_name: leaderboard-api
+    volumes:
+      - .:/home/node/api
+      - /home/node/api/node_modules
+    ports:
+      - '3333:3333'
+    depends_on:
+      - leaderboard-redis
+    networks:
+      - leaderboard-network
+  leaderboard-redis:
+    image: bitnami/redis:latest
+    container_name: leaderboard-redis
+    environment:
+      - ALLOW_EMPTY_PASSWORD=no
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    volumes:
+      - leaderboard-redis-data:/data
+    networks:
+      - leaderboard-network
+
+volumes:
+  leaderboard-redis-data:
+
+networks:
+  leaderboard-network:
+    driver: bridge
